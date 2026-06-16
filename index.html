@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Examina — Multiple Choice Assessment Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #f4f5f7; color: #1a2332; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: #b8c0cc; border-radius: 3px; }
+
+  .view { display: none !important; }
+  .view.active { display: block !important; }
+
+  nav { display:flex; align-items:center; gap:10px; padding: 14px 28px; background:#1a2332; position:sticky; top:0; z-index:50; }
+  .nav-logo { display:flex; align-items:center; gap:10px; font-family:'Source Serif 4', serif; font-weight:700; font-size:18px; color:#fff; letter-spacing:.2px; }
+  .nav-logo-mark { width:32px; height:32px; border-radius:7px; background:#2c4670; display:flex; align-items:center; justify-content:center; color:#a8c5e8; font-size:15px; font-weight:800; }
+  .nav-right { margin-left:auto; display:flex; gap:8px; align-items:center; }
+  #navUser { font-size:13px; color:#9aa8bc; font-weight:600; }
+
+  button { cursor:pointer; border:none; font-family:'Inter',sans-serif; transition:all .15s; }
+  .btn { padding:11px 22px; border-radius:8px; font-size:14px; font-weight:700; letter-spacing:.1px; }
+  .btn-primary { background:#2c4670; color:#fff; }
+  .btn-primary:hover { background:#23395c; }
+  .btn-outline { background:transparent; border:1.5px solid #4a5a72; color:#e2e8f0; }
+  .btn-outline:hover { background:rgba(255,255,255,.06); }
+  .btn-outline-light { background:#fff; border:1.5px solid #cbd2dc; color:#3a4555; }
+  .btn-outline-light:hover { border-color:#2c4670; color:#2c4670; }
+  .btn-full { width:100%; }
+  .btn-sm { padding:8px 16px; font-size:13px; }
+  .btn:disabled { background:#dde1e7 !important; color:#9aa3b0 !important; cursor:not-allowed; }
+
+  .hero { max-width: 760px; margin: 0 auto; padding: 70px 24px 44px; text-align:center; }
+  .hero-tag { display:inline-flex; align-items:center; gap:6px; background:#eef1f6; color:#3a4f72; font-size:12px; font-weight:700; padding:7px 16px; border-radius:5px; margin-bottom:28px; letter-spacing:.3px; text-transform:uppercase; }
+  .hero h1 { font-family:'Source Serif 4', serif; font-size:38px; font-weight:700; line-height:1.2; letter-spacing:-.5px; margin-bottom:20px; color:#1a2332; }
+  .hero h1 em { font-style:normal; color:#2c4670; border-bottom:3px solid #c5d2e6; }
+  .hero p { font-size:16px; color:#5a6678; line-height:1.65; max-width:540px; margin:0 auto 36px; }
+  .hero-actions { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+  .features { max-width: 920px; margin: 0 auto; padding: 10px 24px 90px; display:grid; grid-template-columns: 1fr; gap:18px; }
+  @media (min-width: 700px) { .features { grid-template-columns: repeat(3,1fr); } }
+  .feature-card { background:#fff; border:1px solid #e3e7ed; border-radius:10px; padding:26px; border-top:3px solid #2c4670; }
+  .feature-icon { font-size:24px; margin-bottom:14px; }
+  .feature-card h3 { font-size:15px; font-weight:700; margin-bottom:8px; color:#1a2332; }
+  .feature-card p { font-size:13px; color:#6b7585; line-height:1.6; }
+
+  .footer-note { text-align:center; padding:26px; color:#9aa3b0; font-size:12px; border-top:1px solid #e3e7ed; background:#fff; }
+
+  #roleView.active { display:flex !important; align-items:center; justify-content:center; min-height: calc(100vh - 60px); padding: 24px; background:#eef1f6; }
+  .role-card { background:#fff; border:1px solid #e3e7ed; border-radius:14px; padding:40px; width:420px; max-width:100%; box-shadow:0 12px 36px rgba(26,35,50,.08); }
+  .role-card h2 { font-family:'Source Serif 4',serif; font-size:22px; font-weight:700; margin-bottom:8px; }
+  .role-card .sub { font-size:13px; color:#6b7585; margin-bottom:26px; }
+  .role-option { display:flex; align-items:center; gap:14px; padding:16px; border:1.5px solid #e3e7ed; border-radius:10px; margin-bottom:12px; cursor:pointer; transition:all .15s; }
+  .role-option:hover { border-color:#2c4670; background:#f8f9fb; }
+  .role-option .ricon { font-size:22px; }
+  .role-option .rtext h4 { font-size:14px; font-weight:700; margin-bottom:2px; }
+  .role-option .rtext p { font-size:12px; color:#8a93a3; }
+
+  #studentEntryView.active { display:flex !important; align-items:center; justify-content:center; min-height: calc(100vh - 60px); padding: 24px; background:#eef1f6; }
+  .entry-card { background:#fff; border:1px solid #e3e7ed; border-radius:14px; padding:40px; width:420px; max-width:100%; box-shadow:0 12px 36px rgba(26,35,50,.08); }
+  .entry-card h2 { font-family:'Source Serif 4',serif; font-size:21px; font-weight:700; margin-bottom:6px; }
+  .entry-card .sub { font-size:13px; color:#6b7585; margin-bottom:24px; }
+  .form-group { margin-bottom:16px; }
+  .form-group label { display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px; text-transform:uppercase; letter-spacing:.4px; }
+  .form-input { width:100%; padding:11px 14px; border:1.5px solid #d8dde5; border-radius:8px; font-size:14px; outline:none; font-family:'Inter',sans-serif; }
+  .form-input:focus { border-color:#2c4670; box-shadow:0 0 0 3px #e2e8f5; }
+  .error-msg { color:#c0392b; font-size:13px; margin-top:10px; min-height:18px; }
+  .info-strip { background:#f8f9fb; border:1px solid #e3e7ed; border-radius:8px; padding:12px 14px; margin-bottom:20px; font-size:12px; color:#5a6678; display:flex; align-items:center; gap:8px; }
+
+  #adminView { max-width:880px; margin:0 auto; padding:32px 20px; }
+  .home-header h2 { font-family:'Source Serif 4',serif; font-size:24px; font-weight:700; }
+  .home-sub { color:#6b7585; font-size:13px; margin-bottom:26px; margin-top:4px; }
+  .tabs { display:flex; gap:4px; background:#fff; border:1px solid #e3e7ed; border-radius:10px; padding:4px; margin-bottom:24px; }
+  .tab { flex:1; padding:11px; text-align:center; border-radius:7px; font-size:14px; font-weight:700; color:#6b7585; background:none; border:none; }
+  .tab.active { background:#2c4670; color:#fff; }
+
+  .card { background:#fff; border:1px solid #e3e7ed; border-radius:12px; padding:26px; margin-bottom:20px; }
+  .card h2 { font-size:17px; font-weight:800; margin-bottom:4px; }
+  .card .sub { font-size:13px; color:#94a3b8; margin-bottom:20px; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
+  label.lbl { font-size:13px; font-weight:600; color:#374151; }
+  input[type=number] { padding:8px 12px; border:1.5px solid #d8dde5; border-radius:8px; font-size:14px; outline:none; width:72px; }
+  input[type=text] { padding:8px 12px; border:1.5px solid #d8dde5; border-radius:8px; font-size:14px; outline:none; width:100%; font-family:'Inter',sans-serif; }
+  input:focus { border-color:#2c4670; box-shadow:0 0 0 3px #e2e8f5; }
+
+  .qedit-card { border:1px solid #e3e7ed; border-radius:10px; padding:18px; margin-bottom:14px; background:#fafbfc; }
+  .qedit-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .qedit-header .qnum { width:26px; height:26px; border-radius:50%; background:#2c4670; color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .opt-grid { display:grid; grid-template-columns:1fr; gap:8px; margin-left:36px; }
+  @media (min-width:560px){ .opt-grid { grid-template-columns:1fr 1fr; } }
+  .opt-row { display:flex; align-items:center; gap:8px; }
+  .opt-row input[type=radio] { accent-color:#2c4670; width:16px; height:16px; flex-shrink:0; cursor:pointer; }
+  .opt-row .opt-letter { font-size:12px; font-weight:800; color:#94a3b8; width:14px; flex-shrink:0; }
+  .opt-row input[type=text] { font-size:13px; padding:6px 10px; }
+  .opt-row.correct input[type=text] { border-color:#2e7d4f; background:#f0f9f4; }
+
+  .timer-row { display:flex; align-items:center; gap:10px; background:#f0f4fa; border:1px solid #c9d6e8; border-radius:10px; padding:14px 16px; margin-bottom:20px; }
+  .timer-row label { color:#2c4670; font-weight:700; font-size:13px; }
+  .timer-row input { width:64px; }
+  .timer-row span { font-size:12px; color:#5a7099; }
+
+  .help { font-size:12px; text-align:center; color:#c0392b; margin-top:8px; }
+
+  #examView.active { display:block !important; }
+  .exam-topbar { background:#fff; border-bottom:1px solid #e3e7ed; padding:14px 24px; display:flex; align-items:center; gap:16px; position:sticky; top:60px; z-index:40; }
+  .exam-topbar .exam-student { font-size:13px; color:#3a4555; font-weight:600; }
+  .exam-topbar .exam-student span { color:#8a93a3; font-weight:400; }
+  .timer-box { margin-left:auto; background:#1a2332; color:#fff; padding:9px 18px; border-radius:8px; font-weight:800; font-size:16px; font-family:'Inter',monospace; display:flex; align-items:center; gap:8px; }
+  .timer-box.warning { background:#c0392b; animation:pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.75} }
+  .progress-strip { height:4px; background:#e3e7ed; }
+  .progress-fill { height:100%; background:#2c4670; transition:width .3s; }
+
+  .exam-body { max-width:680px; margin:0 auto; padding:32px 20px 80px; }
+  .q-card { background:#fff; border:1px solid #e3e7ed; border-radius:12px; padding:26px; margin-bottom:18px; }
+  .q-card .q-num { font-size:12px; font-weight:800; color:#8a93a3; text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; }
+  .q-card .q-text { font-size:16px; font-weight:600; color:#1a2332; margin-bottom:18px; line-height:1.5; }
+  .opt-pick { display:flex; align-items:center; gap:12px; padding:13px 16px; border:1.5px solid #e3e7ed; border-radius:9px; margin-bottom:10px; cursor:pointer; transition:all .15s; }
+  .opt-pick:hover { border-color:#a8bdd8; background:#f8f9fb; }
+  .opt-pick.picked { border-color:#2c4670; background:#f0f4fa; }
+  .opt-pick input { accent-color:#2c4670; width:17px; height:17px; cursor:pointer; }
+  .opt-pick .opt-letter2 { font-weight:800; color:#8a93a3; font-size:13px; width:16px; }
+  .opt-pick.picked .opt-letter2 { color:#2c4670; }
+
+  #resultView.active { display:flex !important; align-items:center; justify-content:center; min-height: calc(100vh - 60px); padding:24px; background:#eef1f6; }
+  .result-card { background:#fff; border:1px solid #e3e7ed; border-radius:14px; padding:44px; width:460px; max-width:100%; text-align:center; box-shadow:0 12px 36px rgba(26,35,50,.08); }
+  .result-score { font-family:'Source Serif 4',serif; font-size:56px; font-weight:700; margin:18px 0 6px; }
+  .result-label { font-size:13px; color:#8a93a3; margin-bottom:24px; }
+  .result-grade { display:inline-block; padding:6px 18px; border-radius:20px; font-weight:800; font-size:14px; margin-bottom:28px; }
+  .result-meta { text-align:left; background:#f8f9fb; border-radius:10px; padding:16px 18px; font-size:13px; color:#3a4555; }
+  .result-meta div { display:flex; justify-content:space-between; padding:5px 0; }
+  .result-meta div span:last-child { font-weight:700; }
+
+  .summary-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px; }
+  @media (min-width:500px) { .summary-grid { grid-template-columns:repeat(4,1fr); } }
+  .summary-box { background:#fff; border:1px solid #e3e7ed; border-radius:12px; padding:16px; text-align:center; }
+  .summary-box .val { font-size:24px; font-weight:800; }
+  .summary-box .lbl { font-size:11px; color:#94a3b8; margin-top:4px; }
+  .empty { text-align:center; padding:60px 20px; color:#94a3b8; }
+  .empty .icon { font-size:44px; margin-bottom:12px; }
+  .clickable { cursor:pointer; }
+  .clickable:hover { background:#f8f9fb; }
+  .student-row { padding:12px 0; border-bottom:1px solid #f1f3f6; display:flex; align-items:center; gap:12px; }
+  .student-row:last-child { border-bottom:none; }
+  .student-name { font-weight:700; font-size:14px; flex-shrink:0; min-width:130px; }
+  .student-name small { display:block; font-weight:400; color:#9aa3b0; font-size:11px; }
+  .bar-wrap { flex:1; display:flex; align-items:center; gap:8px; }
+  .bar-bg { flex:1; background:#f1f3f6; border-radius:10px; height:8px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:10px; transition:width .4s; }
+  .score-text { font-size:12px; color:#94a3b8; white-space:nowrap; }
+  .badge-pill { font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+  .green-pill { background:#e3f3ea; color:#1e6b40; }
+  .yellow-pill { background:#fdf3da; color:#92650a; }
+  .red-pill { background:#fae3e1; color:#a3291c; }
+  .blue-pill { background:#e2e8f5; color:#2c4670; }
+  .detail-card { border:1px solid #c9d6e8; }
+  .detail-header { background:#f0f4fa; padding:14px 24px; border-radius:12px 12px 0 0; margin:-26px -26px 16px; font-weight:800; color:#2c4670; }
+  .q-detail-grid { display:grid; grid-template-columns:1fr; gap:10px; }
+  .q-cell { border-radius:9px; padding:12px; border:1px solid; }
+  .q-cell.right { background:#f0f9f4; border-color:#bfe3cc; }
+  .q-cell.wrong { background:#fbeeed; border-color:#f0c4bf; }
+  .q-cell .qtext { font-size:13px; font-weight:600; color:#374151; margin-bottom:6px; }
+  .q-cell .ans-line { font-size:13px; }
+  .q-cell.right .ans-line { color:#1e6b40; font-weight:700; }
+  .q-cell.wrong .ans-line { color:#a3291c; font-weight:700; }
+  .q-cell .correctAns { font-size:12px; color:#6b7585; margin-top:3px; }
+  .qstat-row { padding:10px 24px; border-bottom:1px solid #f1f3f6; }
+  .qstat-row:last-child { border-bottom:none; }
+  .qstat-top { display:flex; align-items:center; gap:12px; margin-bottom:4px; }
+  .qstat-top .qn3 { font-size:12px; font-weight:800; color:#94a3b8; width:30px; flex-shrink:0;}
+  .qstat-top .qtxt { font-size:13px; font-weight:600; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .qstat-bottom { display:flex; align-items:center; gap:12px; padding-left:42px; }
+  .qstat-bottom .meta { font-size:12px; color:#94a3b8; width:90px; text-align:right; flex-shrink:0; }
+  .qstat-bottom .ansLabel { font-size:12px; font-weight:800; color:#94a3b8; white-space:nowrap; }
+  .del-btn { color:#cbd2dc; background:none; border:none; font-size:20px; cursor:pointer; line-height:1; padding:0 4px; flex-shrink:0; }
+  .del-btn:hover { color:#c0392b; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span class="nav-logo-mark">Ex</span> Examina</div>
+  <div class="nav-right">
+    <span id="navUser" style="display:none"></span>
+    <button class="btn btn-outline btn-sm" id="navExit" style="display:none" onclick="exitToLanding()">Exit</button>
+  </div>
+</nav>
+
+<div id="landingView" class="view active">
+  <div class="hero">
+    <div class="hero-tag">Examination Management</div>
+    <h1>Run rigorous multiple-choice<br/><em>assessments with confidence</em></h1>
+    <p>A focused platform for instructors to compose question banks, enforce timed conditions, and review performance — while candidates sit assessments under their own name and matriculation number.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="showView('roleView')">Begin →</button>
+    </div>
+  </div>
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">📝</div>
+      <h3>Question Bank Builder</h3>
+      <p>Compose multiple-choice items with four options each, marking the correct response for automated marking.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⏳</div>
+      <h3>Enforced Time Limits</h3>
+      <p>Each sitting runs against a visible countdown; the assessment locks automatically once time expires.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📈</div>
+      <h3>Immediate Results</h3>
+      <p>Candidates receive their score the moment they submit; instructors get a full class performance breakdown.</p>
+    </div>
+  </div>
+  <div class="footer-note">Examina — Built for classroom assessment.</div>
+</div>
+
+<div id="roleView" class="view">
+  <div class="role-card">
+    <h2>How are you joining?</h2>
+    <div class="sub">Choose your role to continue.</div>
+    <div class="role-option" onclick="enterAdmin()">
+      <span class="ricon">🗂️</span>
+      <div class="rtext"><h4>Instructor</h4><p>Set up questions, answer key, and view results</p></div>
+    </div>
+    <div class="role-option" onclick="showView('studentEntryView')">
+      <span class="ricon">🖋️</span>
+      <div class="rtext"><h4>Candidate</h4><p>Sit the assessment under timed conditions</p></div>
+    </div>
+  </div>
+</div>
+
+<div id="studentEntryView" class="view">
+  <div class="entry-card">
+    <h2>Candidate Details</h2>
+    <div class="sub">Enter your details before the assessment begins.</div>
+    <div class="info-strip" id="examInfoStrip">⏳ This assessment has not been configured by the instructor yet.</div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" class="form-input" id="studentFullName" placeholder="e.g. Sarah Achu Mbah" autocomplete="off" />
+    </div>
+    <div class="form-group">
+      <label>Matricule Number</label>
+      <input type="text" class="form-input" id="studentMatricule" placeholder="e.g. UBa21E0123" autocomplete="off" />
+    </div>
+    <button class="btn btn-primary btn-full" onclick="beginExam()">Begin Assessment</button>
+    <div class="error-msg" id="entryError"></div>
+  </div>
+</div>
+
+<div id="adminView" class="view">
+  <div class="home-header">
+    <h2>Instructor Console</h2>
+    <p class="home-sub">Compose your question bank and review candidate performance.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tabBtn0" onclick="switchAdminTab(0)">Question Bank</button>
+    <button class="tab" id="tabBtn1" onclick="switchAdminTab(1)">Results</button>
+  </div>
+
+  <div id="tab0">
+    <div class="card">
+      <h2>Compose Questions</h2>
+      <div class="sub">Write each question, fill in four options, and mark the correct one.</div>
+      <div class="row">
+        <label class="lbl">Number of Questions:</label>
+        <input type="number" id="numQuestions" value="5" min="1" max="50" onchange="changeNumQuestions()" />
+        <button class="btn btn-outline-light btn-sm" onclick="loadSample()">Load Sample Set</button>
+      </div>
+      <div class="timer-row">
+        <label>Time Allowed:</label>
+        <input type="number" id="examMinutes" value="15" min="1" max="180" onchange="updateExamMinutes()" />
+        <span>minutes per candidate</span>
+      </div>
+      <div id="questionEditor"></div>
+    </div>
+    <button class="btn btn-primary btn-full" id="publishBtn" onclick="publishExam()" disabled>Publish Assessment</button>
+    <div class="help" id="setupHelp">Complete every question, all four options, and mark a correct answer.</div>
+    <div class="help" id="publishedMsg" style="display:none; color:#1e6b40;">✓ Assessment is live. Candidates can now begin.</div>
+  </div>
+
+  <div id="tab1" style="display:none">
+    <div id="reportContent"></div>
+  </div>
+</div>
+
+<div id="examView" class="view">
+  <div class="exam-topbar">
+    <div class="exam-student" id="examStudentLabel"></div>
+    <div class="timer-box" id="examTimerBox">⏱ <span id="examTimerText">15:00</span></div>
+  </div>
+  <div class="progress-strip"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="exam-body" id="examBody"></div>
+</div>
+
+<div id="resultView" class="view">
+  <div class="result-card">
+    <div style="font-size:13px; color:#8a93a3; text-transform:uppercase; letter-spacing:.5px; font-weight:700;">Assessment Complete</div>
+    <div class="result-score" id="resultScoreText">0/0</div>
+    <div class="result-label">Your Score</div>
+    <div class="result-grade" id="resultGradeBadge">—</div>
+    <div class="result-meta">
+      <div><span>Candidate</span><span id="resultName">—</span></div>
+      <div><span>Matricule</span><span id="resultMatricule">—</span></div>
+      <div><span>Percentage</span><span id="resultPct">—</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function el(id){ return document.getElementById(id); }
+function escapeHtml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  el(id).classList.add('active');
+}
+
+let numQuestions = 5;
+let questions = Array.from({length:5}, (_,i)=>({ q:i+1, text:"", options:["","","",""], correctIndex:null }));
+let examMinutes = 15;
+let isPublished = false;
+let candidates = [];
+
+const SAMPLE_QUESTIONS = [
+  { text: "What is the capital city of Cameroon?", options: ["Douala","Yaoundé","Bamenda","Garoua"], correctIndex: 1 },
+  { text: "Which data structure uses LIFO (Last In, First Out)?", options: ["Queue","Stack","Array","Tree"], correctIndex: 1 },
+  { text: "What does HTML stand for?", options: ["Hyper Text Markup Language","High Tech Modern Language","Hyperlink Text Manager","Home Tool Markup Language"], correctIndex: 0 },
+  { text: "What is the boiling point of water at sea level (°C)?", options: ["90","95","100","110"], correctIndex: 2 },
+  { text: "Which of these is a primary color?", options: ["Green","Orange","Purple","Blue"], correctIndex: 3 },
+];
+
+function enterAdmin(){
+  el('navUser').style.display='inline';
+  el('navUser').textContent = '🗂️ Instructor Mode';
+  el('navExit').style.display='inline-block';
+  showView('adminView');
+  renderQuestionEditor();
+}
+
+function exitToLanding(){
+  el('navUser').style.display='none';
+  el('navExit').style.display='none';
+  showView('landingView');
+}
+
+function switchAdminTab(idx){
+  el('tab0').style.display = idx===0 ? 'block':'none';
+  el('tab1').style.display = idx===1 ? 'block':'none';
+  el('tabBtn0').classList.toggle('active', idx===0);
+  el('tabBtn1').classList.toggle('active', idx===1);
+  if(idx===1) renderReport();
+}
+
+function renderQuestionEditor(){
+  el('questionEditor').innerHTML = questions.map((qz, qi) => {
+    const optsHtml = qz.options.map((opt, oi) => {
+      const letter = ["A","B","C","D"][oi];
+      const isCorrect = qz.correctIndex === oi;
+      return '<div class="opt-row '+(isCorrect?'correct':'')+'">'+
+        '<input type="radio" name="correct'+qi+'" '+(isCorrect?'checked':'')+' onchange="setCorrect('+qi+','+oi+')" />'+
+        '<span class="opt-letter">'+letter+'</span>'+
+        '<input type="text" placeholder="Option '+letter+'" value="'+escapeHtml(opt)+'" oninput="setOption('+qi+','+oi+',this.value)" />'+
+      '</div>';
+    }).join('');
+    return '<div class="qedit-card">'+
+      '<div class="qedit-header"><span class="qnum">'+qz.q+'</span>'+
+      '<input type="text" placeholder="Type question '+qz.q+' here..." value="'+escapeHtml(qz.text)+'" oninput="setQuestionText('+qi+',this.value)" style="flex:1" /></div>'+
+      '<div class="opt-grid">'+optsHtml+'</div>'+
+    '</div>';
+  }).join('');
+  checkSetupComplete();
+}
+
+function setQuestionText(qi, val){ questions[qi].text = val; checkSetupComplete(); }
+function setOption(qi, oi, val){ questions[qi].options[oi] = val; checkSetupComplete(); }
+function setCorrect(qi, oi){ questions[qi].correctIndex = oi; renderQuestionEditor(); }
+
+function checkSetupComplete(){
+  const allComplete = questions.length>0 && questions.every(q =>
+    q.text.trim() && q.options.every(o=>o.trim()) && q.correctIndex!==null
+  );
+  el('publishBtn').disabled = !allComplete;
+  el('setupHelp').style.display = allComplete ? 'none' : 'block';
+}
+
+function changeNumQuestions(){
+  let n = parseInt(el('numQuestions').value)||5;
+  n = Math.max(1, Math.min(50, n));
+  el('numQuestions').value = n;
+  numQuestions = n;
+  const newQ = [];
+  for(let i=0;i<n;i++){
+    newQ.push(questions[i] || { q:i+1, text:"", options:["","","",""], correctIndex:null });
+  }
+  questions = newQ;
+  renderQuestionEditor();
+}
+
+function loadSample(){
+  numQuestions = 5;
+  el('numQuestions').value = 5;
+  questions = SAMPLE_QUESTIONS.map((s,i)=>({ q:i+1, text:s.text, options:[...s.options], correctIndex:s.correctIndex }));
+  renderQuestionEditor();
+}
+
+function updateExamMinutes(){
+  let n = parseInt(el('examMinutes').value)||15;
+  n = Math.max(1, Math.min(180, n));
+  el('examMinutes').value = n;
+  examMinutes = n;
+}
+
+function publishExam(){
+  isPublished = true;
+  el('publishedMsg').style.display = 'block';
+  el('examInfoStrip').textContent = '✓ Assessment ready — '+questions.length+' questions, '+examMinutes+' minutes.';
+  el('examInfoStrip').style.background = '#f0f9f4';
+  el('examInfoStrip').style.color = '#1e6b40';
+  el('examInfoStrip').style.borderColor = '#bfe3cc';
+}
+
+let currentCandidate = null;
+let candidatePicks = [];
+let examTimerInterval = null;
+let examTimeRemaining = 0;
+
+function beginExam(){
+  const name = el('studentFullName').value.trim();
+  const matricule = el('studentMatricule').value.trim();
+  if(!isPublished){ el('entryError').textContent = 'The instructor has not published the assessment yet.'; return; }
+  if(!name || !matricule){ el('entryError').textContent = 'Please enter both your name and matricule number.'; return; }
+  el('entryError').textContent = '';
+
+  currentCandidate = { name, matricule };
+  candidatePicks = questions.map(()=>null);
+  examTimeRemaining = examMinutes * 60;
+
+  el('navUser').style.display='inline';
+  el('navUser').textContent = '🖋️ '+name;
+  el('navExit').style.display='inline-block';
+
+  el('examStudentLabel').innerHTML = escapeHtml(name)+' &nbsp;·&nbsp; <span style="color:#8a93a3">'+escapeHtml(matricule)+'</span>';
+  showView('examView');
+  renderExamBody();
+  startExamTimer();
+}
+
+function renderExamBody(){
+  const answeredCount = candidatePicks.filter(p=>p!==null).length;
+  el('progressFill').style.width = Math.round((answeredCount/questions.length)*100)+'%';
+
+  el('examBody').innerHTML = questions.map((qz, qi) => {
+    const optsHtml = qz.options.map((opt,oi)=>{
+      const letter = ["A","B","C","D"][oi];
+      const picked = candidatePicks[qi] === oi;
+      return '<label class="opt-pick '+(picked?'picked':'')+'">'+
+        '<input type="radio" name="exq'+qi+'" '+(picked?'checked':'')+' onchange="pickExamAnswer('+qi+','+oi+')" />'+
+        '<span class="opt-letter2">'+letter+'</span> '+escapeHtml(opt)+
+      '</label>';
+    }).join('');
+    return '<div class="q-card"><div class="q-num">Question '+qz.q+' of '+questions.length+'</div>'+
+      '<div class="q-text">'+escapeHtml(qz.text)+'</div>'+optsHtml+'</div>';
+  }).join('') + '<button class="btn btn-primary btn-full" onclick="submitExam()" style="margin-top:8px;">Submit Assessment</button>';
+}
+
+function pickExamAnswer(qi, oi){
+  candidatePicks[qi] = oi;
+  renderExamBody();
+}
+
+function startExamTimer(){
+  updateExamTimerDisplay();
+  examTimerInterval = setInterval(()=>{
+    examTimeRemaining--;
+    updateExamTimerDisplay();
+    if(examTimeRemaining<=0){
+      clearInterval(examTimerInterval);
+      submitExam(true);
+    }
+  },1000);
+}
+
+function updateExamTimerDisplay(){
+  const m = Math.floor(examTimeRemaining/60);
+  const s = examTimeRemaining%60;
+  el('examTimerText').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const box = el('examTimerBox');
+  if(examTimeRemaining<=60) box.classList.add('warning'); else box.classList.remove('warning');
+}
+
+function submitExam(autoSubmit){
+  if(examTimerInterval) clearInterval(examTimerInterval);
+  if(!autoSubmit){
+    const unanswered = candidatePicks.filter(p=>p===null).length;
+    if(unanswered>0){
+      if(!confirm('You have '+unanswered+' unanswered question(s). Submit anyway?')) return;
+    }
+  }
+  const graded = questions.map((qz, qi) => {
+    const givenIdx = candidatePicks[qi];
+    const isRight = givenIdx !== null && givenIdx === qz.correctIndex;
+    return {
+      q: qz.q, text: qz.text,
+      given: givenIdx!==null ? ["A","B","C","D"][givenIdx] : "—",
+      givenText: givenIdx!==null ? qz.options[givenIdx] : "No answer",
+      correct: ["A","B","C","D"][qz.correctIndex], correctText: qz.options[qz.correctIndex],
+      isRight
+    };
+  });
+  const score = graded.filter(g=>g.isRight).length;
+  const total = questions.length;
+  candidates.push({ id: Date.now(), name: currentCandidate.name, matricule: currentCandidate.matricule, graded, score, total });
+
+  const pct = Math.round((score/total)*100);
+  el('resultScoreText').textContent = score+'/'+total;
+  el('resultPct').textContent = pct+'%';
+  el('resultName').textContent = currentCandidate.name;
+  el('resultMatricule').textContent = currentCandidate.matricule;
+  const letter = gradeLetter(pct);
+  const color = gradeColor(pct);
+  const badge = el('resultGradeBadge');
+  badge.textContent = 'Grade '+letter;
+  badge.className = 'result-grade '+(color==='green'?'green-pill':color==='yellow'?'yellow-pill':'red-pill');
+
+  el('navUser').style.display='none';
+  el('navExit').style.display='none';
+  showView('resultView');
+}
+
+let selectedCandidateId = null;
+
+function gradeColor(pct){ if(pct>=70) return 'green'; if(pct>=50) return 'yellow'; return 'red'; }
+function gradeLetter(pct){ if(pct>=90) return 'A'; if(pct>=80) return 'B'; if(pct>=70) return 'C'; if(pct>=60) return 'D'; return 'F'; }
+function barColor(c){ if(c==='green') return '#2e7d4f'; if(c==='yellow') return '#d4a017'; return '#c0392b'; }
+
+function renderReport(){
+  const content = el('reportContent');
+  if(candidates.length===0){
+    content.innerHTML = '<div class="card"><div class="empty"><div class="icon">📋</div><p>No candidates have completed the assessment yet.</p></div></div>';
+    return;
+  }
+  const avgScore = candidates.reduce((a,s)=>a+s.score,0)/candidates.length;
+  const avgPct = Math.round((avgScore/questions.length)*100);
+  const highest = candidates.reduce((a,b)=>a.score>b.score?a:b);
+  const lowest = candidates.reduce((a,b)=>a.score<b.score?a:b);
+
+  const questionStats = questions.map((qz,i)=>{
+    const correct = candidates.filter(s=>s.graded[i] && s.graded[i].isRight).length;
+    return { q:qz.q, text:qz.text, answer: ["A","B","C","D"][qz.correctIndex], correct, total:candidates.length, pct: Math.round((correct/candidates.length)*100) };
+  }).sort((a,b)=>a.pct-b.pct);
+
+  let html = '<div class="summary-grid">';
+  html += summaryBox(candidates.length, 'Candidates', '#2c4670');
+  html += summaryBox(avgPct+'%', 'Average', avgPct>=70?'#1e6b40':'#c0392b');
+  html += summaryBox(Math.round((highest.score/highest.total)*100)+'%', 'Highest', '#1e6b40');
+  html += summaryBox(Math.round((lowest.score/lowest.total)*100)+'%', 'Lowest', '#c0392b');
+  html += '</div>';
+
+  html += '<div class="card" style="padding:0; overflow:hidden;"><div style="padding:18px 24px; border-bottom:1px solid #f1f3f6;"><h2 style="margin:0;">Candidate Results</h2></div>';
+  const sorted = [...candidates].sort((a,b)=>b.score-a.score);
+  sorted.forEach((s,rank)=>{
+    const pct = Math.round((s.score/s.total)*100);
+    const color = gradeColor(pct);
+    const letter = gradeLetter(pct);
+    html += '<div class="student-row clickable" style="padding:12px 24px;" onclick="selectCandidate('+s.id+')">'+
+      '<span style="font-size:11px;color:#cbd2dc;width:24px;">#'+(rank+1)+'</span>'+
+      '<div class="student-name">'+escapeHtml(s.name)+'<small>'+escapeHtml(s.matricule)+'</small></div>'+
+      '<div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%; background:'+barColor(color)+'"></div></div>'+
+      '<span class="score-text">'+s.score+'/'+s.total+'</span></div>'+
+      '<span class="badge-pill '+color+'-pill">'+pct+'% · '+letter+'</span>'+
+    '</div>';
+  });
+  html += '</div>';
+
+  if(selectedCandidateId!==null){
+    const st = candidates.find(s=>s.id===selectedCandidateId);
+    if(st){
+      html += '<div class="card detail-card"><div class="detail-header">'+escapeHtml(st.name)+' ('+escapeHtml(st.matricule)+') — Detailed Breakdown</div>';
+      html += '<div class="q-detail-grid">';
+      st.graded.forEach(g=>{
+        html += '<div class="q-cell '+(g.isRight?'right':'wrong')+'">'+
+          '<div class="qtext">Q'+g.q+'. '+escapeHtml(g.text)+'</div>'+
+          '<div class="ans-line">Answered: '+g.given+'. '+escapeHtml(g.givenText)+'</div>'+
+          (!g.isRight ? '<div class="correctAns">Correct answer: '+g.correct+'. '+escapeHtml(g.correctText)+'</div>' : '')+
+        '</div>';
+      });
+      html += '</div></div>';
+    }
+  }
+
+  html += '<div class="card" style="padding:0; overflow:hidden;"><div style="padding:18px 24px; border-bottom:1px solid #f1f3f6;"><h2 style="margin:0;">Question-Level Analysis</h2></div>';
+  questionStats.forEach(qs=>{
+    const color = qs.pct>=70?'green':qs.pct>=40?'yellow':'red';
+    html += '<div class="qstat-row">'+
+      '<div class="qstat-top"><span class="qn3">Q'+qs.q+'</span><span class="qtxt">'+escapeHtml(qs.text)+'</span>'+
+      '<span class="badge-pill '+color+'-pill">'+qs.pct+'%</span></div>'+
+      '<div class="qstat-bottom"><div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:'+qs.pct+'%; background:'+barColor(color)+'"></div></div>'+
+      '<span class="meta">'+qs.correct+'/'+qs.total+' correct</span>'+
+      '<span class="ansLabel">Ans: '+qs.answer+'</span></div>'+
+    '</div>';
+  });
+  html += '</div>';
+
+  content.innerHTML = html;
+}
+
+function summaryBox(val, lbl, color){
+  return '<div class="summary-box"><div class="val" style="color:'+color+'">'+val+'</div><div class="lbl">'+lbl+'</div></div>';
+}
+
+function selectCandidate(id){
+  selectedCandidateId = selectedCandidateId===id ? null : id;
+  renderReport();
+}
+</script>
+</body>
+</html>
