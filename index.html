@@ -1,0 +1,560 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MCQ Assessment System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; color: #0f172a; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+  .view { display: none !important; }
+  .view.active { display: block !important; }
+
+  /* NAV */
+  nav { display:flex; align-items:center; gap:10px; padding: 14px 24px; background:#fff; border-bottom:1px solid #e2e8f0; position:sticky; top:0; z-index:50; }
+  .nav-logo { display:flex; align-items:center; gap:10px; font-weight:800; font-size:16px; color:#1e3a8a; }
+  .nav-logo-icon { width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,#2563eb,#1d4ed8); display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; }
+  .nav-right { margin-left:auto; display:flex; gap:8px; align-items:center; }
+  #navUser { font-size:13px; color:#64748b; font-weight:600; }
+
+  button { cursor:pointer; border:none; font-family:'Inter',sans-serif; transition:all .15s; }
+  .btn { padding:10px 20px; border-radius:10px; font-size:14px; font-weight:700; }
+  .btn-primary { background:#2563eb; color:#fff; box-shadow:0 1px 2px rgba(37,99,235,.3); }
+  .btn-primary:hover { background:#1d4ed8; transform:translateY(-1px); }
+  .btn-outline { background:#fff; border:1.5px solid #cbd5e1; color:#334155; }
+  .btn-outline:hover { border-color:#2563eb; color:#2563eb; }
+  .btn-full { width:100%; }
+  .btn-sm { padding:7px 14px; font-size:13px; }
+  .btn:disabled { background:#e2e8f0 !important; color:#94a3b8 !important; cursor:not-allowed; box-shadow:none; }
+
+  /* LANDING */
+  #landingView.active { display:block !important; }
+  .hero { max-width: 720px; margin: 0 auto; padding: 64px 24px 40px; text-align:center; }
+  .hero-badge { display:inline-flex; align-items:center; gap:6px; background:#eff6ff; color:#2563eb; font-size:12px; font-weight:700; padding:6px 14px; border-radius:20px; margin-bottom:24px; }
+  .hero h1 { font-size:36px; font-weight:800; line-height:1.15; letter-spacing:-1px; margin-bottom:18px; }
+  .hero h1 span { color:#2563eb; }
+  .hero p { font-size:16px; color:#64748b; line-height:1.6; max-width:520px; margin:0 auto 32px; }
+  .hero-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .hero-actions .btn { padding:13px 28px; font-size:15px; }
+
+  .features { max-width: 900px; margin: 0 auto; padding: 20px 24px 80px; display:grid; grid-template-columns: 1fr; gap:16px; }
+  @media (min-width: 700px) { .features { grid-template-columns: repeat(3,1fr); } }
+  .feature-card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:24px; }
+  .feature-icon { width:42px; height:42px; border-radius:10px; background:#eff6ff; display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:14px; }
+  .feature-card h3 { font-size:15px; font-weight:700; margin-bottom:6px; }
+  .feature-card p { font-size:13px; color:#64748b; line-height:1.5; }
+
+  .footer-note { text-align:center; padding:24px; color:#94a3b8; font-size:12px; border-top:1px solid #e2e8f0; }
+
+  /* AUTH */
+  #authView.active { display:flex !important; align-items:center; justify-content:center; min-height: calc(100vh - 60px); padding: 24px; background: linear-gradient(180deg,#f8fafc,#eff6ff); }
+  .auth-card { background:#fff; border:1px solid #e2e8f0; border-radius:20px; padding:36px; width:380px; max-width:100%; box-shadow:0 10px 40px rgba(15,23,42,.06); }
+  .auth-card .auth-icon { width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg,#2563eb,#1d4ed8); display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; margin-bottom:18px; }
+  .auth-card h2 { font-size:20px; font-weight:800; margin-bottom:6px; }
+  .auth-card .sub { font-size:13px; color:#64748b; margin-bottom:24px; }
+  .auth-tabs { display:flex; background:#f1f5f9; border-radius:10px; padding:3px; margin-bottom:22px; }
+  .auth-tab { flex:1; padding:8px; text-align:center; border-radius:8px; font-size:13px; font-weight:700; color:#64748b; background:none; border:none; }
+  .auth-tab.active { background:#fff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .form-group { margin-bottom:16px; }
+  .form-group label { display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px; text-transform:uppercase; letter-spacing:.4px; }
+  .form-input { width:100%; padding:11px 14px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:14px; outline:none; font-family:'Inter',sans-serif; }
+  .form-input:focus { border-color:#2563eb; box-shadow:0 0 0 3px #dbeafe; }
+  .error-msg { color:#ef4444; font-size:13px; margin-top:10px; min-height:18px; }
+
+  /* HOME */
+  #homeView { max-width:840px; margin:0 auto; padding:32px 20px; }
+  .home-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; flex-wrap:wrap; gap:12px; }
+  .home-header h2 { font-size:22px; font-weight:800; }
+  .home-sub { color:#64748b; font-size:13px; margin-bottom:28px; }
+  .tabs { display:flex; gap:4px; background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:4px; margin-bottom:24px; }
+  .tab { flex:1; padding:10px; text-align:center; border-radius:9px; font-size:14px; font-weight:700; color:#64748b; background:none; border:none; }
+  .tab.active { background:#2563eb; color:#fff; }
+
+  .card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:24px; margin-bottom:20px; }
+  .card h2 { font-size:17px; font-weight:800; margin-bottom:4px; }
+  .card .sub { font-size:13px; color:#94a3b8; margin-bottom:20px; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
+  label { font-size:13px; font-weight:600; color:#374151; }
+  input[type=number] { padding:8px 12px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:14px; outline:none; width:72px; }
+  input[type=text] { padding:8px 12px; border:1.5px solid #e2e8f0; border-radius:10px; font-size:14px; outline:none; width:100%; font-family:'Inter',sans-serif; }
+  input:focus { border-color:#2563eb; box-shadow:0 0 0 3px #dbeafe; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:10px; }
+  .qbox { display:flex; align-items:center; gap:8px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 10px; }
+  .qbox .qn { font-size:11px; font-weight:800; color:#94a3b8; width:22px; }
+  .qbox select { border:none; background:transparent; font-weight:700; font-size:14px; outline:none; flex:1; color:#374151; cursor:pointer; }
+  .help { font-size:12px; text-align:center; color:#ef4444; margin-top:8px; }
+
+  /* Timer settings */
+  .timer-row { display:flex; align-items:center; gap:10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:14px 16px; margin-bottom:18px; }
+  .timer-row .ticon { font-size:18px; }
+  .timer-row label { color:#1e40af; font-weight:700; font-size:13px; }
+  .timer-row input { width:64px; }
+  .timer-row span { font-size:12px; color:#3b82f6; }
+
+  /* exam timer display */
+  .timer-display { position:fixed; top:70px; right:20px; background:#0f172a; color:#fff; padding:10px 18px; border-radius:12px; font-weight:800; font-size:18px; font-family:monospace; z-index:60; box-shadow:0 4px 16px rgba(0,0,0,.2); display:none; align-items:center; gap:8px; }
+  .timer-display.show { display:flex; }
+  .timer-display.warning { background:#dc2626; animation:pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
+
+  .student-row { padding:12px 0; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; gap:12px; }
+  .student-row:last-child { border-bottom:none; }
+  .student-name { font-weight:700; font-size:14px; flex-shrink:0; min-width:90px; }
+  .bar-wrap { flex:1; display:flex; align-items:center; gap:8px; }
+  .bar-bg { flex:1; background:#f1f5f9; border-radius:10px; height:8px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:10px; transition:width .4s; }
+  .score-text { font-size:12px; color:#94a3b8; white-space:nowrap; }
+  .badge-pill { font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+  .green-pill { background:#dcfce7; color:#15803d; }
+  .yellow-pill { background:#fef9c3; color:#a16207; }
+  .red-pill { background:#fee2e2; color:#b91c1c; }
+  .blue-pill { background:#dbeafe; color:#1d4ed8; }
+  .del-btn { color:#cbd5e1; background:none; border:none; font-size:20px; cursor:pointer; line-height:1; padding:0 4px; }
+  .del-btn:hover { color:#ef4444; }
+
+  .summary-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px; }
+  @media (min-width:500px) { .summary-grid { grid-template-columns:repeat(4,1fr); } }
+  .summary-box { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:16px; text-align:center; }
+  .summary-box .val { font-size:24px; font-weight:800; }
+  .summary-box .lbl { font-size:11px; color:#94a3b8; margin-top:4px; }
+  .empty { text-align:center; padding:60px 20px; color:#94a3b8; }
+  .empty .icon { font-size:44px; margin-bottom:12px; }
+  .clickable { cursor:pointer; }
+  .clickable:hover { background:#f8fafc; }
+  .detail-card { border:1px solid #bfdbfe; }
+  .detail-header { background:#eff6ff; padding:14px 24px; border-radius:16px 16px 0 0; margin:-24px -24px 16px; font-weight:800; color:#1d4ed8; }
+  .q-detail-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:10px; }
+  .q-cell { border-radius:10px; padding:10px; text-align:center; border:1px solid; }
+  .q-cell.right { background:#f0fdf4; border-color:#bbf7d0; }
+  .q-cell.wrong { background:#fef2f2; border-color:#fecaca; }
+  .q-cell .qn2 { font-size:11px; font-weight:800; color:#94a3b8; }
+  .q-cell .ans { font-size:16px; font-weight:800; }
+  .q-cell.right .ans { color:#16a34a; }
+  .q-cell.wrong .ans { color:#ef4444; }
+  .q-cell .correctAns { font-size:11px; color:#94a3b8; }
+  .qstat-row { display:flex; align-items:center; gap:12px; padding:10px 24px; border-bottom:1px solid #f1f5f9; }
+  .qstat-row:last-child { border-bottom:none; }
+  .qstat-row .qn3 { font-size:12px; font-weight:800; color:#94a3b8; width:30px; }
+  .qstat-row .meta { font-size:12px; color:#94a3b8; width:90px; text-align:right; }
+  .qstat-row .ansLabel { font-size:12px; font-weight:800; color:#94a3b8; }
+
+  .time-up-banner { background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; padding:12px 16px; border-radius:10px; font-size:13px; font-weight:600; margin-bottom:18px; display:none; }
+  .time-up-banner.show { display:block; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span class="nav-logo-icon">🎓</span> MCQ Assessment System</div>
+  <div class="nav-right">
+    <span id="navUser" style="display:none"></span>
+    <button class="btn btn-outline btn-sm" id="navSignOut" style="display:none" onclick="signOut()">Sign Out</button>
+  </div>
+</nav>
+
+<!-- LANDING -->
+<div id="landingView" class="view active">
+  <div class="hero">
+    <div class="hero-badge">✓ Trusted by educators</div>
+    <h1>Structured, authoritative<br/><span>academic assessment</span></h1>
+    <p>A precise tool for lecturers to create, manage, and auto-grade timed multiple-choice examinations.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" onclick="goToAuth('register')">Start Using Now →</button>
+      <button class="btn btn-outline" onclick="goToAuth('login')">Sign In</button>
+    </div>
+  </div>
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <h3>Secure & Controlled</h3>
+      <p>Distraction-free exam conditions with strict timing and clear status visibility.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⏱️</div>
+      <h3>Timed Exams</h3>
+      <p>Auto-submitting countdown timers keep grading sessions on track.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎓</div>
+      <h3>Instant Auto-Grading</h3>
+      <p>Immediate feedback and results breakdown upon submission.</p>
+    </div>
+  </div>
+  <div class="footer-note">© 2026 MCQ Assessment System. All rights reserved.</div>
+</div>
+
+<!-- AUTH -->
+<div id="authView" class="view">
+  <div class="auth-card">
+    <div class="auth-icon">🎓</div>
+    <h2>Welcome</h2>
+    <div class="sub">Sign in to manage your assessments.</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="atLogin" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" id="atReg" onclick="switchAuthTab('register')">Sign Up</button>
+    </div>
+    <div class="form-group">
+      <label>Name</label>
+      <input type="text" class="form-input" id="authName" placeholder="Enter your name" autocomplete="off" />
+    </div>
+    <button class="btn btn-primary btn-full" onclick="handleAuth()">Continue</button>
+    <div class="error-msg" id="authError"></div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="homeView" class="view">
+  <div class="home-header">
+    <div>
+      <h2>Assessment Dashboard</h2>
+      <p class="home-sub">Build answer keys, grade students, and review reports.</p>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tabBtn0" onclick="switchTab(0)">⚙️ Setup</button>
+    <button class="tab" id="tabBtn1" onclick="switchTab(1)">✏️ Grade</button>
+    <button class="tab" id="tabBtn2" onclick="switchTab(2)">📊 Report</button>
+  </div>
+
+  <div id="tab0">
+    <div class="card">
+      <h2>Configure Answer Key</h2>
+      <div class="sub">Set the correct answers for each question.</div>
+      <div class="row">
+        <label>Questions:</label>
+        <input type="number" id="numQuestions" value="10" min="1" max="50" onchange="changeNumQuestions()" />
+        <button class="btn btn-outline btn-sm" onclick="loadSample()">Load Sample (10 Qs)</button>
+      </div>
+      <div class="timer-row">
+        <span class="ticon">⏱️</span>
+        <label>Exam Duration:</label>
+        <input type="number" id="examMinutes" value="20" min="1" max="180" onchange="updateExamMinutes()" />
+        <span>minutes per student grading session</span>
+      </div>
+      <div class="grid" id="answerKeyGrid"></div>
+    </div>
+    <button class="btn btn-primary btn-full" id="continueBtn" onclick="switchTab(1)" disabled>Continue to Grade Students →</button>
+    <div class="help" id="setupHelp">Fill in all answers before continuing.</div>
+  </div>
+
+  <div id="tab1" style="display:none">
+    <div class="time-up-banner" id="timeUpBanner">⏰ Time's up for this grading session. You can still add students, but the timer has ended.</div>
+    <div class="card">
+      <h2>Enter Student Answers</h2>
+      <div class="sub">Enter the student's name and their selected answers.</div>
+      <label>Student Name</label><br/>
+      <input type="text" id="studentName" placeholder="e.g. John Doe" style="margin-top:6px; margin-bottom:16px;" />
+      <div class="grid" id="studentAnswerGrid"></div>
+      <br/>
+      <button class="btn btn-primary btn-full" onclick="addStudent()">+ Add & Grade Student</button>
+    </div>
+    <div class="card" id="studentListCard" style="display:none">
+      <h2 id="studentCountTitle">Graded Students (0)</h2>
+      <div id="studentList"></div>
+    </div>
+    <button class="btn btn-primary btn-full" id="viewReportBtn" style="display:none" onclick="switchTab(2)">View Full Report →</button>
+  </div>
+
+  <div id="tab2" style="display:none">
+    <div id="reportContent"></div>
+  </div>
+</div>
+
+<div class="timer-display" id="timerDisplay">⏱️ <span id="timerText">20:00</span></div>
+
+<script>
+let currentUser = null;
+let numQuestions = 10;
+let answerKey = Array.from({length:10}, (_,i)=>({q:i+1, answer:""}));
+let studentAnswers = Array.from({length:10}, (_,i)=>({q:i+1, answer:""}));
+let students = [];
+let selectedStudentId = null;
+let examMinutes = 20;
+let timerInterval = null;
+let timeRemaining = 0;
+let timerStarted = false;
+
+const SAMPLE = ["A","C","B","D","A","C","B","A","D","C"];
+
+function el(id){ return document.getElementById(id); }
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  el(id).classList.add('active');
+}
+
+function goToAuth(mode){
+  switchAuthTab(mode);
+  showView('authView');
+}
+
+let authMode = 'login';
+function switchAuthTab(mode){
+  authMode = mode;
+  el('atLogin').classList.toggle('active', mode==='login');
+  el('atReg').classList.toggle('active', mode==='register');
+  el('authError').textContent='';
+}
+
+function handleAuth(){
+  const name = el('authName').value.trim();
+  if(!name) { el('authError').textContent = 'Please enter your name.'; return; }
+  currentUser = name;
+  el('navUser').style.display='inline';
+  el('navUser').textContent = '👤 '+name;
+  el('navSignOut').style.display='inline-block';
+  showView('homeView');
+  renderAnswerKeyGrid();
+  renderStudentAnswerGrid();
+}
+
+function signOut(){
+  currentUser = null;
+  el('navUser').style.display='none';
+  el('navSignOut').style.display='none';
+  el('authName').value='';
+  stopTimer();
+  showView('landingView');
+}
+
+function switchTab(idx){
+  for(let i=0;i<3;i++){
+    el('tab'+i).style.display = i===idx ? 'block' : 'none';
+    el('tabBtn'+i).classList.toggle('active', i===idx);
+  }
+  if(idx===2) renderReport();
+  if(idx===1 && !timerStarted) startTimer();
+}
+
+function updateExamMinutes(){
+  let n = parseInt(el('examMinutes').value)||20;
+  n = Math.max(1, Math.min(180, n));
+  el('examMinutes').value = n;
+  examMinutes = n;
+}
+
+function startTimer(){
+  timerStarted = true;
+  timeRemaining = examMinutes * 60;
+  el('timerDisplay').classList.add('show');
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    timeRemaining--;
+    updateTimerDisplay();
+    if(timeRemaining <= 0){
+      stopTimer();
+      el('timeUpBanner').classList.add('show');
+    }
+  }, 1000);
+}
+
+function stopTimer(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+  timerStarted = false;
+  el('timerDisplay').classList.remove('show');
+}
+
+function updateTimerDisplay(){
+  const m = Math.floor(timeRemaining/60);
+  const s = timeRemaining%60;
+  el('timerText').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const disp = el('timerDisplay');
+  if(timeRemaining <= 60) disp.classList.add('warning');
+  else disp.classList.remove('warning');
+}
+
+function optionsHtml(selected){
+  let opts = ['<option value="">-</option>'];
+  ['A','B','C','D','E'].forEach(o=>{
+    opts.push('<option value="'+o+'"'+(selected===o?' selected':'')+'>'+o+'</option>');
+  });
+  return opts.join('');
+}
+
+function renderAnswerKeyGrid(){
+  el('answerKeyGrid').innerHTML = answerKey.map((item,idx)=>
+    '<div class="qbox"><span class="qn">Q'+item.q+'</span><select onchange="updateAnswerKey('+idx+',this.value)">'+optionsHtml(item.answer)+'</select></div>'
+  ).join('');
+  checkSetupComplete();
+}
+
+function renderStudentAnswerGrid(){
+  el('studentAnswerGrid').innerHTML = studentAnswers.map((item,idx)=>
+    '<div class="qbox"><span class="qn">Q'+item.q+'</span><select onchange="updateStudentAnswer('+idx+',this.value)">'+optionsHtml(item.answer)+'</select></div>'
+  ).join('');
+}
+
+function updateAnswerKey(idx,val){ answerKey[idx].answer = val; checkSetupComplete(); }
+function updateStudentAnswer(idx,val){ studentAnswers[idx].answer = val; }
+
+function checkSetupComplete(){
+  const allFilled = answerKey.length>0 && answerKey.every(k=>k.answer);
+  el('continueBtn').disabled = !allFilled;
+  el('setupHelp').style.display = allFilled ? 'none' : 'block';
+}
+
+function changeNumQuestions(){
+  let n = parseInt(el('numQuestions').value)||10;
+  n = Math.max(1, Math.min(50, n));
+  el('numQuestions').value = n;
+  numQuestions = n;
+  const newKey = [];
+  const newAns = [];
+  for(let i=0;i<n;i++){
+    newKey.push(answerKey[i] || {q:i+1, answer:""});
+    newAns.push(studentAnswers[i] || {q:i+1, answer:""});
+  }
+  answerKey = newKey;
+  studentAnswers = newAns;
+  renderAnswerKeyGrid();
+  renderStudentAnswerGrid();
+}
+
+function loadSample(){
+  numQuestions = 10;
+  el('numQuestions').value = 10;
+  answerKey = SAMPLE.map((a,i)=>({q:i+1, answer:a}));
+  studentAnswers = Array.from({length:10},(_,i)=>({q:i+1, answer:""}));
+  renderAnswerKeyGrid();
+  renderStudentAnswerGrid();
+}
+
+function addStudent(){
+  const name = el('studentName').value.trim();
+  if(!name) return alert('Please enter a student name.');
+  if(!studentAnswers.every(a=>a.answer)) return alert('Please answer all questions for this student.');
+  const graded = studentAnswers.map((a,i)=>({
+    q:a.q, given:a.answer, correct:answerKey[i].answer, isRight:a.answer===answerKey[i].answer
+  }));
+  const score = graded.filter(g=>g.isRight).length;
+  students.push({ id: Date.now(), name, graded, score, total: answerKey.length });
+  el('studentName').value = '';
+  studentAnswers = answerKey.map(k=>({q:k.q, answer:""}));
+  renderStudentAnswerGrid();
+  renderStudentList();
+}
+
+function removeStudent(id){
+  students = students.filter(s=>s.id!==id);
+  renderStudentList();
+}
+
+function gradeColor(pct){ if(pct>=70) return 'green'; if(pct>=50) return 'yellow'; return 'red'; }
+function gradeLetter(pct){ if(pct>=90) return 'A'; if(pct>=80) return 'B'; if(pct>=70) return 'C'; if(pct>=60) return 'D'; return 'F'; }
+function barColor(c){ if(c==='green') return '#22c55e'; if(c==='yellow') return '#facc15'; return '#f87171'; }
+
+function renderStudentList(){
+  if(students.length===0){
+    el('studentListCard').style.display='none';
+    el('viewReportBtn').style.display='none';
+    return;
+  }
+  el('studentListCard').style.display='block';
+  el('viewReportBtn').style.display='block';
+  el('studentCountTitle').textContent = 'Graded Students ('+students.length+')';
+  el('studentList').innerHTML = students.map(s=>{
+    const pct = Math.round((s.score/s.total)*100);
+    const color = gradeColor(pct);
+    const letter = gradeLetter(pct);
+    return '<div class="student-row">'+
+      '<div class="student-name">'+escapeHtml(s.name)+'</div>'+
+      '<div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%; background:'+barColor(color)+'"></div></div>'+
+      '<span class="score-text">'+s.score+'/'+s.total+'</span></div>'+
+      '<span class="badge-pill '+color+'-pill">'+pct+'% · '+letter+'</span>'+
+      '<button class="del-btn" onclick="removeStudent('+s.id+')">×</button>'+
+    '</div>';
+  }).join('');
+}
+
+function escapeHtml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderReport(){
+  const content = el('reportContent');
+  if(students.length===0){
+    content.innerHTML = '<div class="card"><div class="empty"><div class="icon">📋</div><p>No students graded yet. Add students in the Grade tab.</p></div></div>';
+    return;
+  }
+  const avgScore = students.reduce((a,s)=>a+s.score,0)/students.length;
+  const avgPct = Math.round((avgScore/answerKey.length)*100);
+  const highest = students.reduce((a,b)=>a.score>b.score?a:b);
+  const lowest = students.reduce((a,b)=>a.score<b.score?a:b);
+
+  const questionStats = answerKey.map((k,i)=>{
+    const correct = students.filter(s=>s.graded[i] && s.graded[i].isRight).length;
+    return { q:k.q, answer:k.answer, correct, total:students.length, pct: Math.round((correct/students.length)*100) };
+  }).sort((a,b)=>a.pct-b.pct);
+
+  let html = '<div class="summary-grid">';
+  html += summaryBox(students.length, 'Students', '#2563eb');
+  html += summaryBox(avgPct+'%', 'Class Average', avgPct>=70?'#16a34a':'#ef4444');
+  html += summaryBox(Math.round((highest.score/highest.total)*100)+'%', 'Highest', '#16a34a');
+  html += summaryBox(Math.round((lowest.score/lowest.total)*100)+'%', 'Lowest', '#ef4444');
+  html += '</div>';
+
+  html += '<div class="card" style="padding:0; overflow:hidden;"><div style="padding:18px 24px; border-bottom:1px solid #f1f5f9;"><h2 style="margin:0;">Student Results</h2></div>';
+  const sorted = [...students].sort((a,b)=>b.score-a.score);
+  sorted.forEach((s,rank)=>{
+    const pct = Math.round((s.score/s.total)*100);
+    const color = gradeColor(pct);
+    const letter = gradeLetter(pct);
+    html += '<div class="student-row clickable" style="padding:12px 24px;" onclick="selectStudent('+s.id+')">'+
+      '<span style="font-size:11px;color:#cbd5e1;width:24px;">#'+(rank+1)+'</span>'+
+      '<div class="student-name">'+escapeHtml(s.name)+'</div>'+
+      '<div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:'+pct+'%; background:'+barColor(color)+'"></div></div>'+
+      '<span class="score-text">'+s.score+'/'+s.total+'</span></div>'+
+      '<span class="badge-pill '+color+'-pill">'+pct+'% · '+letter+'</span>'+
+    '</div>';
+  });
+  html += '</div>';
+
+  if(selectedStudentId!==null){
+    const st = students.find(s=>s.id===selectedStudentId);
+    if(st){
+      html += '<div class="card detail-card"><div class="detail-header">'+escapeHtml(st.name)+' — Detailed Breakdown</div>';
+      html += '<div class="q-detail-grid">';
+      st.graded.forEach(g=>{
+        html += '<div class="q-cell '+(g.isRight?'right':'wrong')+'">'+
+          '<div class="qn2">Q'+g.q+'</div><div class="ans">'+(g.given||'–')+'</div>'+
+          (!g.isRight ? '<div class="correctAns">✓ '+g.correct+'</div>' : '')+
+        '</div>';
+      });
+      html += '</div></div>';
+    }
+  }
+
+  html += '<div class="card" style="padding:0; overflow:hidden;"><div style="padding:18px 24px; border-bottom:1px solid #f1f5f9;"><h2 style="margin:0;">Question Difficulty Analysis</h2></div>';
+  questionStats.forEach(qs=>{
+    const color = qs.pct>=70?'green':qs.pct>=40?'yellow':'red';
+    html += '<div class="qstat-row">'+
+      '<span class="qn3">Q'+qs.q+'</span>'+
+      '<div class="bar-bg" style="flex:1"><div class="bar-fill" style="width:'+qs.pct+'%; background:'+barColor(color)+'"></div></div>'+
+      '<span class="meta">'+qs.correct+'/'+qs.total+' correct</span>'+
+      '<span class="badge-pill '+color+'-pill">'+qs.pct+'%</span>'+
+      '<span class="ansLabel">Ans: '+qs.answer+'</span>'+
+    '</div>';
+  });
+  html += '</div>';
+
+  content.innerHTML = html;
+}
+
+function summaryBox(val, lbl, color){
+  return '<div class="summary-box"><div class="val" style="color:'+color+'">'+val+'</div><div class="lbl">'+lbl+'</div></div>';
+}
+
+function selectStudent(id){
+  selectedStudentId = selectedStudentId===id ? null : id;
+  renderReport();
+}
+</script>
+</body>
+</html>
